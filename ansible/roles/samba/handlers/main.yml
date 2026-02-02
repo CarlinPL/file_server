@@ -1,0 +1,4 @@
+- name: Restart samba           ## Definir o nome das tasks
+  service:                      ## selecionar um serviço para realizar uma ação
+    name: smbd                  ## nome do serviço
+    state: restarted            ## ação a ser realizada no serviço

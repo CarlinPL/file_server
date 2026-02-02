@@ -1,0 +1,14 @@
+- name: Configurar servidor SMB
+  hosts: file_server              ## Seleciona o grupo de hosts que queremos nos conectar
+  become: true                    ## Usa sudo para executar comandos no host como root
+
+  vars:                           ## Cria uma variavel
+    samba_user : fileserver       ## Nome do usuário samba
+    samba_password : "teste123"   ## Senha do usuário samba
+    shared_folders:               ## Nome da variavel
+      - teste1                    ## modelo de lista que queremos na nossa variável
+      - teste2
+      - teste3
+
+  roles:
+    - samba                       ## Executa a role chamada samba / sistema automaticamente busca o diretorio roles/samba/tasks/main.yml

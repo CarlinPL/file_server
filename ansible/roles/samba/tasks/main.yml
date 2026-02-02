@@ -1,0 +1,56 @@
+- name: Atualizar cache dos pacotes       ## Define o nome da task que queremos realizar
+  apt:
+    update_cache: yes                     ## Esse comando serve para executar no terminal da instancia o comando "apt update"
+
+- name: Instalar samba
+  apt:
+    name: samba
+    state: present                        ## Verifica se o apt samba está presente, se não estiver instala o samba.
+
+- name: Criar diretorio base do samba
+  file:
+    path: /srv/samba                      ## Cria pasta base do samba em /srv/samba
+    state: directory                      ## Especifica que é um diretorio
+    mode: '0777'                          ## Coloca permissão 777 para a pasta permitindo leitura, edição e escrita
+
+- name: Criar pastas compartilhadas
+  file:
+    path: "/srv/samba/{{ item }}"         ## Pede para o ansible criar pastas com o final dinamico de acordo com a variável que foi informado arquivo playbook.yml
+    state: directory
+    mode: '0777'
+  loop: "{{ shared_folders }}"            ## realiza um loop usando a variavel shared_folders no qual faz o ansible criar pastas de acordo com os itens dentro da variável
+
+- name: Configurar smb.conf               ## Task para configurar o arquivo smb.conf no diretorio /etc/samba/smb.conf na instancia EC2 
+  template:                               ## Informamos que o ansible vai usar um template
+    src: smb.conf.j2                      ## Mencionamos o tamplate presente na pasta ansible/roles/samba/templates/smb.conf.j2
+    dest: /etc/samba/smb.conf             ## escolhemos qual o destino que esse template vai ser colado, no nosso caso seria no smb.conf
+  notify: Restart samba                   ## Reinicia o samba
+
+- name: criar usuário linux
+  user:
+    name: "{{ samba_user}}"               ## Puxa o nome da variavel samba_user para ser criado
+    shell: /bin/bash
+    create_home: true                     ## Cria o usuário no sistema operacional se não existir
+
+- name: definir senha linux
+  user:
+    name: "{{ samba_user }}"
+    password: "{{ samba_password | password_hash('sha512') }}"  ## Cria senha usando hash seguro
+
+
+- name: criar usuario samba
+  shell:  |                                                                                      ## Abre o shell e executa o comando de senha 2 vezes
+    (echo "{{ samba_password }}"; echo "{{ samba_password }}") | smbpasswd -a {{ samba_user}}
+  args:
+    creates: "/var/lib/samba/private/{{ samba_user }}.tdb"                                       ## Evita recriação do usuario se o mesmo já existir
+
+- name: ativar usuário samba
+  command: smbpasswd -e {{ samba_user }}
+
+- name: ajustar permissões das pastas samba
+  file:
+    path: "/srv/samba"
+    owner: "{{samba_user}}"                                                                      ## Define o dono do diretorio
+    group: "{{samba_user}}"                                                                      ## Define quem pode ler o diretorio
+    mode: '0777'                                                                                 ## Permite a edição, escrita e leitura no diretorio
+    recurse: true

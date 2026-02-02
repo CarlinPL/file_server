@@ -1,0 +1,15 @@
+[global]                                                                                                                 
+   workgroup = WORKGROUP                                                                                                 
+   server string = File Server SMB                                                                                       
+   security = user                                                                                                       
+   map to guest = Bad User                                                                                              
+
+{% for folder in shared_folders %}                                                                                       
+[{{ folder }}]                                                                                                           
+    path = /srv/samba/{{ folder }}                                                                                      
+    browseable = yes                                                                                                     
+    writable = yes                                                                                                      
+    valid users = {{ samba_user }}                                                                                                  
+    read only = no                                                                                                       
+{% endfor %}                                                                                                             
+
