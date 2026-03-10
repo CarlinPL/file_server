@@ -7,5 +7,5 @@ variable "instance_type" {                          ## cria variavel que informa
 variable "key_name" {                               ## cria variável key name onde informamos o nome do par de chaves
     description = "Escreva qual o par de chaves"
     type = string
-    default = "iacalura"                            ## Aqui deixamos o par de chaves padrão caso a gente já saiba o nome e não queira digitar na hora de executar o código
+    default = "teste"                            ## Aqui deixamos o par de chaves padrão caso a gente já saiba o nome e não queira digitar na hora de executar o código
 }
