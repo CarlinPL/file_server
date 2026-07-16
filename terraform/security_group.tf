@@ -22,5 +22,4 @@ resource "aws_security_group" "smb_sg" {
         protocol = "-1"                            ## Permitir saida de qualquer protocolo
         cidr_blocks = ["0.0.0.0/0"]
     }
-
 }

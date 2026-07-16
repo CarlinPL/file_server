@@ -9,5 +9,6 @@ resource "aws_instance" "file_server" {
 
     tags = {
         name = "file_server"
+        Provisioned = "Terraform"
     }
 }
