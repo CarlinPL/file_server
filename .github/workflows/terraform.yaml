@@ -42,11 +42,14 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+        working-directory: ./terraform
       
       - name: Terraform Plan
         run: terraform plan -out=tfplan.tfout
+        working-directory: ./terraform
 
       - name: Terrafomr apply
         run: terraform apply -auto-approve tfplan.tfout
         if: github.event.input.apply == 'true'
+        working-directory: ./terraform
   
