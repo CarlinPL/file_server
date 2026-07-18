@@ -43,7 +43,7 @@ jobs:
         run: terraform validate
       
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -out=tfplan.tfout
 
       - name: Terrafomr apply
         run: terraform apply -auto-approve tfplan
